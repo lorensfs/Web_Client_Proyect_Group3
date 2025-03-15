@@ -9,5 +9,6 @@ CREATE TABLE usuario(
     nombre VARCHAR(50) NOT NULL,
     `password` VARCHAR(100) NOT NULL,
 	rolId BIGINT NOT NULL,
+    activo BOOLEAN NOT NULL,
     FOREIGN KEY (rolId) REFERENCES rol(rolID)
 ); 
