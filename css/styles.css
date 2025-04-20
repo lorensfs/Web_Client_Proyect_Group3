@@ -46,3 +46,12 @@ body {
     background-color: #1e293b !important;
     color: #ffffff !important;
 }
+
+.login-container {
+    margin-top: 100px;
+}
+
+.login-card {
+    padding: 30px;
+    border-radius: 15px;
+}
