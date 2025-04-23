@@ -1,5 +1,5 @@
 <?php
-require_once '../config/database.php';
+require_once '../../config/database.php';
 
 $sql = "SELECT materialId, nombre, descripcion, cantidad FROM material WHERE deleted_at IS NULL";
 $result = $conn->query($sql);

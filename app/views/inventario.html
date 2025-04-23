@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="../../public/css/styles.css">
 </head>
 
 <body>
@@ -16,7 +16,8 @@
     <div class="sidebar">
         <h4 class="text-center">SMIR</h4>
         <a class="nav-link text-white" href="index.html"><i class="fas fa-home"></i> Inicio </a>
-        <a class="nav-link text-white" href="registro_materiales.html"><i class="fas fa-box"></i> Registro de Materiales </a>
+        <a class="nav-link text-white" href="registro_materiales.html"><i class="fas fa-box"></i> Registro de Materiales
+        </a>
         <a class="nav-link text-white" href="inventario.html"><i class="fas fa-archive"></i> Inventario </a>
         <a class="nav-link text-white" href="usuarios.html"><i class="fas fa-users"></i> Usuarios </a>
         <a class="nav-link text-white" href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes </a>
@@ -40,7 +41,8 @@
 
                 <div class="mb-3">
                     <label for="buscarProducto" class="form-label">Buscar producto:</label>
-                    <input type="text" class="form-control" id="buscarProducto" placeholder="Escribe el nombre del producto...">
+                    <input type="text" class="form-control" id="buscarProducto"
+                        placeholder="Escribe el nombre del producto...">
                 </div>
 
                 <div class="table-responsive  ">
@@ -67,11 +69,8 @@
             </div>
             <div class="card-body">
 
-
-                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#pedidoModal"
-                    onclick="openPedidoModal()">
+                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#pedidoModal">
                     Realizar pedido
-                    <!-- Redirige a la seccion donde se hacen pedidos -->
                 </button>
 
                 <div class="table-responsive ">
@@ -85,27 +84,22 @@
                             </tr>
                         </thead>
                         <tbody id="bajoStockTablaBody">
-                            <!-- Se llenará dinámicamente  -->
+                            <!-- Se llena dinámicamente  -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </div>  
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            fetch('./app/controllers/InventarioController.php')
+            fetch('../controllers/InventarioController.php')
                 .then(response => response.json())
                 .then(data => {
                     const tabla = document.getElementById('inventarioTablaBody');
                     const bajoStock = document.getElementById('bajoStockTablaBody');
-    
+
                     data.forEach(item => {
                         const fila = `
                             <tr>
@@ -116,8 +110,8 @@
                             </tr>
                         `;
                         tabla.innerHTML += fila;
-    
-                        if (item.cantidad < 5) { // Ajusta este umbral según tu criterio de bajo stock
+
+                        if (item.cantidad < 5) {
                             bajoStock.innerHTML += fila;
                         }
                     });
@@ -125,7 +119,35 @@
         });
     </script>
 
+    <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="pedidoForm" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pedidoModalLabel">Realizar Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="materialNombre" class="form-label">Nombre del Material</label>
+                        <input type="text" class="form-control" id="materialNombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidadPedido" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidadPedido" min="1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Enviar Pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../../public/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
 </body>
-
-
 </html>
