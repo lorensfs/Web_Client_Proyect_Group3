@@ -6,7 +6,12 @@ try {
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'GET') {
-        echo json_encode(Usuario::getAll());
+        $entity = $_GET['entity'] ?? 'user';
+        if ($entity === 'role') {
+            echo json_encode(Rol::getAll());
+        } else {
+            echo json_encode(Usuario::getAll());
+        }
         exit;
     }
 
