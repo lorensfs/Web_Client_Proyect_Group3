@@ -19,11 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['nombre'] = $usuario['nombre'];
         $_SESSION['rolId'] = $usuario['rolId'];
 
-        header("Location: ../../index.html");
+        header("Location: ../views/index.html");
         exit;
     } else {
         $_SESSION['login_error'] = true;
-        header("Location: ../../login.php"); 
+        header("Location: ../views/login.php"); 
     }
 }
 ?>

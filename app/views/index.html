@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="./public/css/styles.css">
+    <link rel="stylesheet" href="../../public/css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -18,14 +18,14 @@
         <h4 class="text-center">SMIR</h4>
         <a class="nav-link text-white" href="index.html"><i class="fas fa-home"></i> Inicio </a>
         <a class="nav-link text-white" href="registro_materiales.html"><i class="fas fa-box"></i> Registro de Materiales </a>
-        <a class="nav-link text-white" href="app/views/inventario.html"><i class="fas fa-archive"></i> Inventario </a>
+        <a class="nav-link text-white" href="inventario.html"><i class="fas fa-archive"></i> Inventario </a>
         <a class="nav-link text-white" href="usuarios.html"><i class="fas fa-users"></i> Usuarios </a>
         <a class="nav-link text-white" href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes </a>
     </div>
 
     <div class="content my-4">
         <div class="d-flex justify-content-end mb-3">
-            <a href="app/controllers/logout.php" class="btn btn-danger">
+            <a href="../controllers/logout.php" class="btn btn-danger">
                 <i class="fas fa-sign-out-alt"></i> Salir
             </a>
         </div>
@@ -40,7 +40,7 @@
                 <a class="btn btn-primary btn-lg" href="registro_materiales.html" role="button">
                     <i class="fas fa-box"></i> Registrar Materiales
                 </a>
-                <a class="btn btn-primary btn-lg" href="app/views/inventario.html" role="button">
+                <a class="btn btn-primary btn-lg" href="inventario.html" role="button">
                     <i class="fas fa-archive"></i> Inventario
                 </a>
                 <a class="btn btn-primary btn-lg" href="usuarios.html" role="button">
@@ -107,7 +107,7 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function () {
-            $.getJSON("app/controllers/panel_datos.php", function (data) {
+            $.getJSON("../controllers/panel_datos.php", function (data) {
                 $('#total_productos').text(data.totalProductos);
                 $('#usuarios_registrados').text(data.totalUsuarios);
 
