@@ -1,7 +1,10 @@
 <?php
 require_once '../../config/database.php';
 
-$sql = "SELECT materialId, nombre, descripcion, cantidad FROM material WHERE deleted_at IS NULL";
+$sql = "SELECT m.materialId, m.nombre, m.descripcion, m.cantidad, c.nombre AS categoriaNombre 
+        FROM material m 
+        LEFT JOIN categoria c ON m.categoriaId = c.categoriaId 
+        WHERE m.deleted_at IS NULL";
 $result = $conn->query($sql);
 
 $materiales = [];
