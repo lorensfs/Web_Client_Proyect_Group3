@@ -184,25 +184,25 @@
                         tbody.empty();
                             data.forEach(material => {
                                 const row = `<tr>
-                                    <td>${material.materialId}</td>
-                                    <td>${material.nombre}</td>
-                                    <td>${material.descripcion}</td>
-                                    <td>${material.cantidad}</td>
-                                    <td>${material.categoriaNombre || ''}</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm btn-editar" 
-                                            data-id="${material.materialId}" 
-                                            data-nombre="${material.nombre}" 
-                                            data-descripcion="${material.descripcion}" 
-                                            data-cantidad="${material.cantidad}"
-                                            data-categoriaid="${material.categoriaId}">
-                                            Editar
-                                        </button>
-                                        <button class="btn btn-danger btn-sm btn-eliminar" data-id="${material.materialId}">
-                                            Eliminar
-                                        </button>
-                                    </td>
-                                </tr>`;
+                                <td>${material.materialId}</td>
+                                <td>${material.nombre}</td>
+                                <td>${material.descripcion}</td>
+                                <td>${material.categoriaNombre || ''}</td>
+                                <td>${material.cantidad}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm btn-editar" 
+                                        data-id="${material.materialId}" 
+                                        data-nombre="${material.nombre}" 
+                                        data-descripcion="${material.descripcion}" 
+                                        data-cantidad="${material.cantidad}"
+                                        data-categoriaid="${material.categoriaId}">
+                                        Editar
+                                    </button>
+                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${material.materialId}">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>`;
                                 tbody.append(row);
                             });
                     },
