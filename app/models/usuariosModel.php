@@ -17,6 +17,13 @@ class Usuario
     {
         global $conn;
 
+        $dup = $conn->prepare("SELECT 1 FROM usuario WHERE correo = ? AND deleted_at IS NULL");
+        $dup->bind_param("s", $correo);
+        $dup->execute();
+        if ($dup->get_result()->num_rows) {
+            throw new Exception("El correo ya está registrado.");
+        }
+
         $stmt = $conn->prepare(
             "INSERT INTO usuario (nombre, correo, password, rolId) VALUES (?, ?, ?, ?)"
         );

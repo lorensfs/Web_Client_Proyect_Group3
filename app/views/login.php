@@ -11,7 +11,7 @@ unset($_SESSION['login_error']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SMIR - Login</title>
+    <title>SMIR - Registro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
@@ -44,6 +44,8 @@ unset($_SESSION['login_error']);
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">Ingresar</button>
+                                <a onclick="location.href='./register.php'" value="Registrar"
+                                    class="btn btn-outline-secondary mt-2">Ir a Registro</a>
                             </div>
                         </form>
 
