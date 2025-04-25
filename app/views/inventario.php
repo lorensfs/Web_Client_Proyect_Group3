@@ -1,3 +1,5 @@
+<?php require_once '../controllers/auth.php'; ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -15,12 +17,20 @@
 
     <div class="sidebar">
         <h4 class="text-center">SMIR</h4>
-        <a class="nav-link text-white" href="index.html"><i class="fas fa-home"></i> Inicio </a>
-        <a class="nav-link text-white" href="registro_materiales.html"><i class="fas fa-box"></i> Registro de Materiales
-        </a>
-        <a class="nav-link text-white" href="inventario.html"><i class="fas fa-archive"></i> Inventario </a>
-        <a class="nav-link text-white" href="usuarios.html"><i class="fas fa-users"></i> Usuarios </a>
-        <a class="nav-link text-white" href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes </a>
+        <?php if (isAdmin()): ?>
+            <a class="nav-link text-white" href="usuarios.php"><i class="fas fa-users"></i> Usuarios </a>
+            <a class="nav-link text-white" href="index.php"><i class="fas fa-home"></i> Inicio </a>
+            <a class="nav-link text-white" href="registro_materiales.php"><i class="fas fa-box"></i> Registro de Materiales
+            </a>
+            <a class="nav-link text-white" href="inventario.php"><i class="fas fa-archive"></i> Inventario </a>
+            <a class="nav-link text-white" href="reportes.php"><i class="fas fa-chart-bar"></i> Reportes </a>
+        <?php elseif (isUsuario()): ?>
+            <a class="nav-link text-white" href="index.php"><i class="fas fa-home"></i> Inicio </a>
+            <a class="nav-link text-white" href="registro_materiales.php"><i class="fas fa-box"></i> Registro de Materiales
+            </a>
+            <a class="nav-link text-white" href="inventario.php"><i class="fas fa-archive"></i> Inventario </a>
+            <a class="nav-link text-white" href="reportes.php"><i class="fas fa-chart-bar"></i> Reportes </a>
+        <?php endif; ?>
     </div>
 
     <div class="content my-4">
@@ -150,4 +160,5 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
 </body>
+
 </html>
