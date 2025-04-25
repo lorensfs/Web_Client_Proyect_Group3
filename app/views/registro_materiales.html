@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SMIR - Materiales</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../../public/css/styles.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+</head>
+
+<body>
+    <div class="sidebar">
+        <h4 class="text-center">SMIR</h4>
+
+        <a class="nav-link text-white" href="index.html"><i class="fas fa-home"></i> Inicio </a>
+
+        <a class="nav-link text-white" href="registro_materiales.html"><i class="fas fa-box"></i> Registro de Materiales </a>
+
+        <a class="nav-link text-white" href="inventario.html"><i class="fas fa-archive"></i> Inventario </a>
+
+        <a class="nav-link text-white" href="usuarios.html"><i class="fas fa-users"></i> Usuarios </a>
+
+        <a class="nav-link text-white" href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes </a>
+    </div>
+
+    <div class="content my-4">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="../controllers/logout.php" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </a>
+        </div>
+
+        <h1 class="mb-4">Registro de materiales</h1>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary">
+                <h2 class="h5 mb-0">Gestión de Materiales</h2>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#agregarMaterialModal"
+                    onclick="openAgregarMaterialModal()">
+                    Agregar Material
+                </button>
+
+                <!-- Modal para agregar material -->
+                <!-- Este modal contiene el formulario para registrar un nuevo material -->
+                <div class="modal fade" id="agregarMaterialModal" tabindex="-1" aria-labelledby="agregarMaterialModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <!-- Formulario para agregar material -->
+                        <form id="agregarMaterialForm">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="agregarMaterialModalLabel">Agregar Material</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Campo para el nombre del material -->
+                                    <div class="mb-3">
+                                        <label for="materialNombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="materialNombre" name="nombre" required />
+                                    </div>
+                                    <!-- Campo para la descripción del material -->
+                                    <div class="mb-3">
+                                        <label for="materialDescripcion" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="materialDescripcion" name="descripcion" rows="3"
+                                            required></textarea>
+                                    </div>
+                                    <!-- Campo para la categoría del material -->
+                                    <div class="mb-3">
+                                        <label for="materialCategoria" class="form-label">Categoría</label>
+                                        <select class="form-select" id="materialCategoria" name="categoriaId" required>
+                                            <option value="">Seleccione una categoría</option>
+                                        </select>
+                                    </div>
+                                    <!-- Campo para la cantidad del material -->
+                                    <div class="mb-3">
+                                        <label for="materialCantidad" class="form-label">Cantidad</label>
+                                        <input type="number" class="form-control" id="materialCantidad" name="cantidad" min="1"
+                                            required />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- Botón para cancelar y cerrar el modal -->
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <!-- Botón para enviar el formulario y guardar el material -->
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Modal para editar material -->
+                <!-- Este modal contiene el formulario para editar un material existente -->
+                <div class="modal fade" id="editarMaterialModal" tabindex="-1" aria-labelledby="editarMaterialModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <!-- Formulario para editar material -->
+                        <form id="editarMaterialForm">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning text-white">
+                                    <h5 class="modal-title" id="editarMaterialModalLabel">Editar Material</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Campo oculto para el ID del material -->
+                                    <input type="hidden" id="editarMaterialId" name="materialId" />
+                                    <!-- Campo para el nombre del material -->
+                                    <div class="mb-3">
+                                        <label for="editarMaterialNombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="editarMaterialNombre" name="nombre" required />
+                                    </div>
+                                    <!-- Campo para la descripción del material -->
+                                    <div class="mb-3">
+                                        <label for="editarMaterialDescripcion" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="editarMaterialDescripcion" name="descripcion" rows="3"
+                                            required></textarea>
+                                    </div>
+                                    <!-- Campo para la categoría del material -->
+                                    <div class="mb-3">
+                                        <label for="editarMaterialCategoria" class="form-label">Categoría</label>
+                                        <select class="form-select" id="editarMaterialCategoria" name="categoriaId" required>
+                                            <option value="">Seleccione una categoría</option>
+                                        </select>
+                                    </div>
+                                    <!-- Campo para la cantidad del material -->
+                                    <div class="mb-3">
+                                        <label for="editarMaterialCantidad" class="form-label">Cantidad</label>
+                                        <input type="number" class="form-control" id="editarMaterialCantidad" name="cantidad" min="1"
+                                            required />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- Botón para cancelar y cerrar el modal -->
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <!-- Botón para enviar el formulario y guardar los cambios -->
+                                    <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Cantidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agregarMaterialTablaBody">
+                            <!-- Se llenará con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            function cargarMateriales() {
+                $.ajax({
+                    url: '../controllers/InventarioController.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        const tbody = $('#agregarMaterialTablaBody');
+                        tbody.empty();
+                            data.forEach(material => {
+                                const row = `<tr>
+                                <td>${material.materialId}</td>
+                                <td>${material.nombre}</td>
+                                <td>${material.descripcion}</td>
+                                <td>${material.cantidad}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm btn-editar" 
+                                        data-id="${material.materialId}" 
+                                        data-nombre="${material.nombre}" 
+                                        data-descripcion="${material.descripcion}" 
+                                        data-cantidad="${material.cantidad}">
+                                        Editar
+                                    </button>
+                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${material.materialId}">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>`;
+                                tbody.append(row);
+                            });
+                    },
+                    error: function () {
+                        alert('Error al cargar los materiales.');
+                    }
+                });
+            }
+
+            cargarMateriales();
+
+            // Función para cargar categorías en los dropdowns
+            function cargarCategorias() {
+                $.ajax({
+                    url: '../controllers/CategoriasController.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        const selectAgregar = $('#materialCategoria');
+                        const selectEditar = $('#editarMaterialCategoria');
+                        selectAgregar.empty().append('<option value="">Seleccione una categoría</option>');
+                        selectEditar.empty().append('<option value="">Seleccione una categoría</option>');
+                        data.forEach(categoria => {
+                            selectAgregar.append(`<option value="${categoria.categoriaId}">${categoria.nombre}</option>`);
+                            selectEditar.append(`<option value="${categoria.categoriaId}">${categoria.nombre}</option>`);
+                        });
+                    },
+                    error: function () {
+                        alert('Error al cargar las categorías.');
+                    }
+                });
+            }
+
+            cargarCategorias();
+
+            $('#agregarMaterialForm').submit(function (e) {
+                e.preventDefault();
+
+                const nombre = $('#materialNombre').val().trim();
+                const descripcion = $('#materialDescripcion').val().trim();
+                const categoriaId = $('#materialCategoria').val();
+                const cantidad = parseInt($('#materialCantidad').val());
+
+                if (!nombre || !descripcion || !categoriaId || isNaN(cantidad) || cantidad < 1) {
+                    alert('Por favor, complete todos los campos correctamente.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '../controllers/RegistroMaterialesController.php',
+                    method: 'POST',
+                    data: { nombre, descripcion, categoriaId, cantidad },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $('#agregarMaterialModal').modal('hide');
+                            $('#agregarMaterialForm')[0].reset();
+                            cargarMateriales();
+                        } else {
+                            alert('Error: ' + response.error);
+                        }
+                    },
+                    error: function () {
+                        alert('Error al conectar con el servidor.');
+                    }
+                });
+            });
+
+
+            // Función para eliminar un material
+            $('#agregarMaterialTablaBody').on('click', '.btn-eliminar', function () {
+                const materialId = $(this).data('id');
+
+                if (confirm('¿Está seguro de que desea eliminar este material?')) {
+                    $.ajax({
+                        url: '../controllers/EliminarMaterialController.php',
+                        method: 'POST',
+                        data: { materialId },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                alert(response.message);
+                                cargarMateriales();
+                            } else {
+                                alert('Error: ' + response.error);
+                            }
+                        },
+                        error: function () {
+                            alert('Error al conectar con el servidor.');
+                        }
+                    });
+                }
+            });
+
+            // Función para abrir el modal de edición y cargar los datos del material seleccionado
+            $('#agregarMaterialTablaBody').on('click', '.btn-editar', function () {
+                const materialId = $(this).data('id');
+                const nombre = $(this).data('nombre');
+                const descripcion = $(this).data('descripcion');
+                const categoriaId = $(this).data('categoriaid');
+                const cantidad = $(this).data('cantidad');
+
+                $('#editarMaterialId').val(materialId);
+                $('#editarMaterialNombre').val(nombre);
+                $('#editarMaterialDescripcion').val(descripcion);
+                $('#editarMaterialCategoria').val(categoriaId);
+                $('#editarMaterialCantidad').val(cantidad);
+
+                $('#editarMaterialModal').modal('show');
+            });
+
+            // Manejo del envío del formulario de edición
+            $('#editarMaterialForm').submit(function (e) {
+                e.preventDefault();
+
+                const materialId = $('#editarMaterialId').val();
+                const nombre = $('#editarMaterialNombre').val().trim();
+                const descripcion = $('#editarMaterialDescripcion').val().trim();
+                const categoriaId = $('#editarMaterialCategoria').val();
+                const cantidad = parseInt($('#editarMaterialCantidad').val());
+
+                if (!nombre || !descripcion || !categoriaId || isNaN(cantidad) || cantidad < 1) {
+                    alert('Por favor, complete todos los campos correctamente.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '../controllers/EditarMaterialController.php',
+                    method: 'POST',
+                    data: { materialId, nombre, descripcion, categoriaId, cantidad },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $('#editarMaterialModal').modal('hide');
+                            cargarMateriales();
+                        } else {
+                            alert('Error: ' + response.error);
+                        }
+                    },
+                    error: function () {
+                        alert('Error al conectar con el servidor.');
+                    }
+                });
+            });
+
+            // Función para eliminar un material
+            $('#agregarMaterialTablaBody').on('click', '.btn-eliminar', function () {
+                const materialId = $(this).data('id');
+
+                if (confirm('¿Está seguro de que desea eliminar este material?')) {
+                    $.ajax({
+                        url: '../controllers/EliminarMaterialController.php',
+                        method: 'POST',
+                        data: { materialId },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                alert(response.message);
+                                cargarMateriales();
+                            } else {
+                                alert('Error: ' + response.error);
+                            }
+                        },
+                        error: function () {
+                            alert('Error al conectar con el servidor.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
