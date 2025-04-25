@@ -6,30 +6,34 @@ try {
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'GET') {
-        $entity = $_GET['entity'] ?? 'user';
-        if ($entity === 'role') {
-            echo json_encode(Rol::getAll());
-        } else {
-            echo json_encode(Usuario::getAll());
-        }
+        echo json_encode(Usuario::getAll());
         exit;
     }
 
-    $data = json_decode(file_get_contents("php://input"), true) ?? [];
-    $entity = $data['entity'] ?? '';
+    $isJson = isset($_SERVER['CONTENT_TYPE'])
+        && str_contains($_SERVER['CONTENT_TYPE'], 'application/json');
+
+    if ($isJson) {
+        $data = json_decode(file_get_contents("php://input"), true) ?? [];
+    } else {
+        $data = $_POST;
+    }
+
+    $entity = $data['entity'] ?? 'user';
     $action = $data['action'] ?? '';
 
-    if ($entity === 'user') {
+    if ($entity !== 'user') {
+        throw new Exception("Operación no permitida.");
+    }
 
-        if ($action === 'add') {
-            $ok = Usuario::add(
-                $data['nombre'],
-                $data['correo'],
-                $data['password'],
-                (int) $data['rolId']
-            );
-            echo json_encode($ok);
-        } elseif ($action === 'update') {
+    switch ($action) {
+
+        case 'add':
+            $ok = Usuario::add($data['nombre'], $data['correo'], $data['password'], 2);
+            echo json_encode(['ok' => $ok ? 1 : 0]);
+            break;
+
+        case 'update':
             $ok = Usuario::update(
                 (int) $data['usuarioId'],
                 $data['nombre'],
@@ -38,30 +42,14 @@ try {
                 (int) $data['rolId']
             );
             echo json_encode($ok);
-        } elseif ($action === 'delete') {
+            break;
+
+        case 'delete':
             echo json_encode(Usuario::delete((int) $data['usuarioId']));
-        } else {
+            break;
+
+        default:
             throw new Exception("Acción de usuario no válida");
-        }
-
-    } elseif ($entity === 'role') {
-
-        if ($action === 'add') {
-            echo json_encode(Rol::add($data['nombreRol'], $data['descripcion']));
-        } elseif ($action === 'update') {
-            echo json_encode(Rol::update(
-                (int) $data['rolId'],
-                $data['nombreRol'],
-                $data['descripcion']
-            ));
-        } elseif ($action === 'delete') {
-            echo json_encode(Rol::delete((int) $data['rolId']));
-        } else {
-            throw new Exception("Acción de rol no válida");
-        }
-
-    } else {
-        throw new Exception("Entidad no reconocida.");
     }
 
 } catch (Exception $e) {
