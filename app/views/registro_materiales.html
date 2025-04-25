@@ -123,15 +123,20 @@
                     success: function (data) {
                         const tbody = $('#agregarMaterialTablaBody');
                         tbody.empty();
-                        data.forEach(material => {
-                            const row = `<tr>
-                                <td>${material.materialId}</td>
-                                <td>${material.nombre}</td>
-                                <td>${material.descripcion}</td>
-                                <td>${material.cantidad}</td>
-                            </tr>`;
-                            tbody.append(row);
-                        });
+                            data.forEach(material => {
+                                const row = `<tr>
+                                    <td>${material.materialId}</td>
+                                    <td>${material.nombre}</td>
+                                    <td>${material.descripcion}</td>
+                                    <td>${material.cantidad}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm btn-eliminar" data-id="${material.materialId}">
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>`;
+                                tbody.append(row);
+                            });
                     },
                     error: function () {
                         alert('Error al cargar los materiales.');
