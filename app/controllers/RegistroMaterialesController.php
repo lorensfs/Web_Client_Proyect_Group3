@@ -10,20 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Se obtienen los datos enviados desde el formulario
     $nombre = $_POST['nombre'] ?? '';
     $descripcion = $_POST['descripcion'] ?? '';
+    $categoriaId = $_POST['categoriaId'] ?? '';
     $cantidad = $_POST['cantidad'] ?? 0;
 
     // Validación básica de los datos recibidos
-    if (empty($nombre) || empty($descripcion) || !is_numeric($cantidad)) {
+    if (empty($nombre) || empty($descripcion) || empty($categoriaId) || !is_numeric($cantidad)) {
         // Si los datos son inválidos, se envía un mensaje de error en formato JSON y se termina la ejecución
         echo json_encode(['success' => false, 'error' => 'Datos incompletos o inválidos']);
         exit;
     }
 
-    // Se convierte la cantidad a entero
+    // Se convierte la cantidad y categoriaId a entero
     $cantidad = (int)$cantidad;
+    $categoriaId = (int)$categoriaId;
 
     // Preparación de la consulta SQL para insertar un nuevo material
-    $stmt = $conn->prepare("INSERT INTO material (nombre, descripcion, cantidad) VALUES (?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO material (nombre, descripcion, categoriaId, cantidad) VALUES (?, ?, ?, ?)");
     if (!$stmt) {
         // Si hay un error en la preparación de la consulta, se envía un mensaje de error
         echo json_encode(['success' => false, 'error' => 'Error en la preparación de la consulta']);
@@ -31,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Se vinculan los parámetros a la consulta preparada
-    $stmt->bind_param("ssi", $nombre, $descripcion, $cantidad);
+    $stmt->bind_param("ssii", $nombre, $descripcion, $categoriaId, $cantidad);
 
     // Se ejecuta la consulta y se verifica si fue exitosa
     if ($stmt->execute()) {

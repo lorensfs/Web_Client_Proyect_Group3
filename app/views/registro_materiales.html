@@ -69,6 +69,13 @@
                                         <textarea class="form-control" id="materialDescripcion" name="descripcion" rows="3"
                                             required></textarea>
                                     </div>
+                                    <!-- Campo para la categoría del material -->
+                                    <div class="mb-3">
+                                        <label for="materialCategoria" class="form-label">Categoría</label>
+                                        <select class="form-select" id="materialCategoria" name="categoriaId" required>
+                                            <option value="">Seleccione una categoría</option>
+                                        </select>
+                                    </div>
                                     <!-- Campo para la cantidad del material -->
                                     <div class="mb-3">
                                         <label for="materialCantidad" class="form-label">Cantidad</label>
@@ -112,6 +119,13 @@
                                         <label for="editarMaterialDescripcion" class="form-label">Descripción</label>
                                         <textarea class="form-control" id="editarMaterialDescripcion" name="descripcion" rows="3"
                                             required></textarea>
+                                    </div>
+                                    <!-- Campo para la categoría del material -->
+                                    <div class="mb-3">
+                                        <label for="editarMaterialCategoria" class="form-label">Categoría</label>
+                                        <select class="form-select" id="editarMaterialCategoria" name="categoriaId" required>
+                                            <option value="">Seleccione una categoría</option>
+                                        </select>
                                     </div>
                                     <!-- Campo para la cantidad del material -->
                                     <div class="mb-3">
@@ -173,12 +187,14 @@
                                     <td>${material.nombre}</td>
                                     <td>${material.descripcion}</td>
                                     <td>${material.cantidad}</td>
+                                    <td>${material.categoriaNombre || ''}</td>
                                     <td>
                                         <button class="btn btn-warning btn-sm btn-editar" 
                                             data-id="${material.materialId}" 
                                             data-nombre="${material.nombre}" 
                                             data-descripcion="${material.descripcion}" 
-                                            data-cantidad="${material.cantidad}">
+                                            data-cantidad="${material.cantidad}"
+                                            data-categoriaid="${material.categoriaId}">
                                             Editar
                                         </button>
                                         <button class="btn btn-danger btn-sm btn-eliminar" data-id="${material.materialId}">
@@ -197,14 +213,39 @@
 
             cargarMateriales();
 
+            // Función para cargar categorías en los dropdowns
+            function cargarCategorias() {
+                $.ajax({
+                    url: '../controllers/CategoriasController.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        const selectAgregar = $('#materialCategoria');
+                        const selectEditar = $('#editarMaterialCategoria');
+                        selectAgregar.empty().append('<option value="">Seleccione una categoría</option>');
+                        selectEditar.empty().append('<option value="">Seleccione una categoría</option>');
+                        data.forEach(categoria => {
+                            selectAgregar.append(`<option value="${categoria.categoriaId}">${categoria.nombre}</option>`);
+                            selectEditar.append(`<option value="${categoria.categoriaId}">${categoria.nombre}</option>`);
+                        });
+                    },
+                    error: function () {
+                        alert('Error al cargar las categorías.');
+                    }
+                });
+            }
+
+            cargarCategorias();
+
             $('#agregarMaterialForm').submit(function (e) {
                 e.preventDefault();
 
                 const nombre = $('#materialNombre').val().trim();
                 const descripcion = $('#materialDescripcion').val().trim();
+                const categoriaId = $('#materialCategoria').val();
                 const cantidad = parseInt($('#materialCantidad').val());
 
-                if (!nombre || !descripcion || isNaN(cantidad) || cantidad < 1) {
+                if (!nombre || !descripcion || !categoriaId || isNaN(cantidad) || cantidad < 1) {
                     alert('Por favor, complete todos los campos correctamente.');
                     return;
                 }
@@ -212,7 +253,7 @@
                 $.ajax({
                     url: '../controllers/RegistroMaterialesController.php',
                     method: 'POST',
-                    data: { nombre, descripcion, cantidad },
+                    data: { nombre, descripcion, categoriaId, cantidad },
                     dataType: 'json',
                     success: function (response) {
                         if (response.success) {
@@ -229,6 +270,7 @@
                     }
                 });
             });
+
 
             // Función para eliminar un material
             $('#agregarMaterialTablaBody').on('click', '.btn-eliminar', function () {
@@ -260,11 +302,13 @@
                 const materialId = $(this).data('id');
                 const nombre = $(this).data('nombre');
                 const descripcion = $(this).data('descripcion');
+                const categoriaId = $(this).data('categoriaid');
                 const cantidad = $(this).data('cantidad');
 
                 $('#editarMaterialId').val(materialId);
                 $('#editarMaterialNombre').val(nombre);
                 $('#editarMaterialDescripcion').val(descripcion);
+                $('#editarMaterialCategoria').val(categoriaId);
                 $('#editarMaterialCantidad').val(cantidad);
 
                 $('#editarMaterialModal').modal('show');
@@ -277,9 +321,10 @@
                 const materialId = $('#editarMaterialId').val();
                 const nombre = $('#editarMaterialNombre').val().trim();
                 const descripcion = $('#editarMaterialDescripcion').val().trim();
+                const categoriaId = $('#editarMaterialCategoria').val();
                 const cantidad = parseInt($('#editarMaterialCantidad').val());
 
-                if (!nombre || !descripcion || isNaN(cantidad) || cantidad < 1) {
+                if (!nombre || !descripcion || !categoriaId || isNaN(cantidad) || cantidad < 1) {
                     alert('Por favor, complete todos los campos correctamente.');
                     return;
                 }
@@ -287,7 +332,7 @@
                 $.ajax({
                     url: '../controllers/EditarMaterialController.php',
                     method: 'POST',
-                    data: { materialId, nombre, descripcion, cantidad },
+                    data: { materialId, nombre, descripcion, categoriaId, cantidad },
                     dataType: 'json',
                     success: function (response) {
                         if (response.success) {
