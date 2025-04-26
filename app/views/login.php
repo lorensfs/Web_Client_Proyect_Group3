@@ -1,4 +1,63 @@
 <?php
+require_once '../../config/database.php';
+require_once '../models/usuariosModel.php';
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+function ensureRole(mysqli $conn, string $nombreRol, string $descripcion = ''): int
+{
+    $stmt = $conn->prepare(
+        "SELECT rolId FROM rol
+         WHERE nombreRol = ? AND deleted_at IS NULL
+         LIMIT 1"
+    );
+    $stmt->bind_param("s", $nombreRol);
+    $stmt->execute();
+    $stmt->bind_result($id);
+    if ($stmt->fetch()) {
+        return $id;
+    }
+
+    $stmt = $conn->prepare(
+        "INSERT INTO rol (nombreRol, descripcion) VALUES (?, ?)"
+    );
+    $stmt->bind_param("ss", $nombreRol, $descripcion);
+    $stmt->execute();
+
+    return $stmt->insert_id;
+}
+
+function ensureAdminUser(mysqli $conn, int $adminRoleId): void
+{
+    $correo = 'admin@gmail.com';
+    $nombre = 'Admin';
+    $plain = 'Admin';
+
+    $stmt = $conn->prepare(
+        "SELECT usuarioId FROM usuario
+         WHERE LOWER(correo) = LOWER(?) AND deleted_at IS NULL
+         LIMIT 1"
+    );
+    $stmt->bind_param("s", $correo);
+    $stmt->execute();
+    if ($stmt->fetch()) {
+        return;
+    }
+
+    Usuario::add($nombre, $correo, $plain, $adminRoleId, );
+}
+
+$conn->begin_transaction();
+try {
+    $adminRoleId = ensureRole($conn, 'Admin', 'Usuario con privilegios administrativos');
+    ensureRole($conn, 'User', 'Usuario estándar');
+    ensureAdminUser($conn, $adminRoleId);
+    $conn->commit();
+} catch (Throwable $e) {
+    $conn->rollback();
+    throw $e;
+}
+
 session_start();
 
 
