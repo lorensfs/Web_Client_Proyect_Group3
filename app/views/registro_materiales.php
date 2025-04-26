@@ -187,137 +187,229 @@
 
     <script>
         $(document).ready(function () {
-            const tblMateriales = $('#materialesTable').DataTable({ language: { url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json' } })
-            const tblCategorias = $('#categoriasTable').DataTable({ language: { url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json' } })
+            const tblMateriales = $('#materialesTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json' }
+            });
+            const tblCategorias = $('#categoriasTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json' }
+            });
 
             function cargarCategoriasSelect() {
-                $.getJSON('../controllers/CategoriasController.php', data => {
-                    const selects = $('#materialCategoria, #editarMaterialCategoria')
-                    selects.empty().append('<option value="">Seleccione una categoría</option>')
-                    data.forEach(c => selects.append(`<option value="${c.categoriaId}">${c.nombre}</option>`))
-                }).fail(() => alert('Error al cargar las categorías.'))
+                $.getJSON('../controllers/CategoriasController.php')
+                    .done(function (data) {
+                        const selects = $('#materialCategoria, #editarMaterialCategoria');
+                        selects.empty().append('<option value="">Seleccione una categoría</option>');
+                        data.forEach(function (c) {
+                            selects.append(`<option value="${c.categoriaId}">${c.nombre}</option>`);
+                        });
+                    })
+                    .fail(function () {
+                        alert('Error al cargar las categorías.');
+                    });
             }
 
             function cargarCategoriasTabla() {
-                $.getJSON('../controllers/CategoriasController.php', data => {
-                    tblCategorias.clear()
-                    data.forEach(c => {
-                        tblCategorias.row.add([
-                            c.categoriaId,
-                            c.nombre,
-                            c.descripcion ?? '',
-                            `<button class="btn btn-warning btn-sm mat-editar" data-id="${c.categoriaId}" data-nombre="${c.nombre}" data-descripcion="${c.descripcion ?? ''}">Editar</button>
-                     <button class="btn btn-danger btn-sm mat-eliminar" data-id="${c.categoriaId}">Eliminar</button>`
-                        ])
+                $.getJSON('../controllers/CategoriasController.php')
+                    .done(function (data) {
+                        tblCategorias.clear();
+                        data.forEach(function (c) {
+                            tblCategorias.row.add([
+                                c.categoriaId,
+                                c.nombre,
+                                c.descripcion || '',
+                                `<button class="btn btn-warning btn-sm cat-editar"
+                                 data-id="${c.categoriaId}"
+                                 data-nombre="${c.nombre}"
+                                 data-descripcion="${c.descripcion || ''}">
+                             Editar
+                         </button>
+                         <button class="btn btn-danger btn-sm cat-eliminar"
+                                 data-id="${c.categoriaId}">
+                             Eliminar
+                         </button>`
+                            ]);
+                        });
+                        tblCategorias.draw();
+                        cargarCategoriasSelect();
                     })
-                    tblCategorias.draw()
-                    cargarCategoriasSelect()
-                }).fail(() => alert('Error al cargar las categorías.'))
+                    .fail(function () {
+                        alert('Error al cargar las categorías.');
+                    });
             }
 
             $('#agregarCategoriaForm').submit(function (e) {
-                e.preventDefault()
-                const payload = { nombre: $('#categoriaNombre').val().trim(), descripcion: $('#categoriaDescripcion').val().trim() }
-                if (!payload.nombre) return alert('El nombre es obligatorio.')
-                $.post('../controllers/CategoriasController.php', payload, r => {
-                    if (r.success) { $('#agregarCategoriaModal').modal('hide'); this.reset(); cargarCategoriasTabla(); alert(r.message) } else alert('Error: ' + r.error)
-                }, 'json').fail(() => alert('Error de servidor al crear categoría.'))
-            })
+                e.preventDefault();
+                const payload = {
+                    nombre: $('#categoriaNombre').val().trim(),
+                    descripcion: $('#categoriaDescripcion').val().trim()
+                };
+                if (!payload.nombre) return alert('El nombre es obligatorio.');
+                $.post('../controllers/CategoriasController.php', payload, function (r) {
+                    if (r.success) {
+                        $('#agregarCategoriaModal').modal('hide');
+                        e.target.reset();
+                        cargarCategoriasTabla();
+                        alert(r.message);
+                    } else {
+                        alert('Error: ' + r.error);
+                    }
+                }, 'json').fail(function () {
+                    alert('Error de servidor al crear categoría.');
+                });
+            });
 
-            $('#categoriasTablaBody').on('click', '.cat-editar', function () {
-                const d = $(this).data()
-                $('#editarCategoriaId').val(d.id)
-                $('#editarCategoriaNombre').val(d.nombre)
-                $('#editarCategoriaDescripcion').val(d.descripcion)
-                $('#editarCategoriaModal').modal('show')
-            })
+            $('#categoriasTable tbody').on('click', '.cat-editar', function () {
+                const d = $(this).data();
+                $('#editarCategoriaId').val(d.id);
+                $('#editarCategoriaNombre').val(d.nombre);
+                $('#editarCategoriaDescripcion').val(d.descripcion);
+                $('#editarCategoriaModal').modal('show');
+            });
 
             $('#editarCategoriaForm').submit(function (e) {
-                e.preventDefault()
-                const payload = { categoriaId: $('#editarCategoriaId').val(), nombre: $('#editarCategoriaNombre').val().trim(), descripcion: $('#editarCategoriaDescripcion').val().trim() }
-                if (!payload.nombre) return alert('El nombre es obligatorio.')
-                $.post('../controllers/CategoriasController.php', payload, r => {
-                    if (r.success) { $('#editarCategoriaModal').modal('hide'); cargarCategoriasTabla(); alert(r.message) } else alert('Error: ' + r.error)
-                }, 'json').fail(() => alert('Error de servidor al editar categoría.'))
-            })
+                e.preventDefault();
+                const payload = {
+                    categoriaId: $('#editarCategoriaId').val(),
+                    nombre: $('#editarCategoriaNombre').val().trim(),
+                    descripcion: $('#editarCategoriaDescripcion').val().trim()
+                };
+                if (!payload.nombre) return alert('El nombre es obligatorio.');
+                $.post('../controllers/CategoriasController.php', payload, function (r) {
+                    if (r.success) {
+                        $('#editarCategoriaModal').modal('hide');
+                        cargarCategoriasTabla();
+                        alert(r.message);
+                    } else {
+                        alert('Error: ' + r.error);
+                    }
+                }, 'json').fail(function () {
+                    alert('Error de servidor al editar categoría.');
+                });
+            });
 
-            $('#categoriasTablaBody').on('click', '.cat-eliminar', function () {
-                const id = $(this).data('id')
-                if (!confirm('¿Eliminar esta categoría?')) return
-                $.post('../controllers/CategoriasController.php', { categoriaId: id }, r => {
-                    if (r.success) { cargarCategoriasTabla(); alert(r.message) } else alert('Error: ' + r.error)
-                }, 'json').fail(() => alert('Error de servidor al eliminar categoría.'))
-            })
+            $('#categoriasTable tbody').on('click', '.cat-eliminar', function () {
+                const id = $(this).data('id');
+                if (!confirm('¿Eliminar esta categoría?')) return;
+                $.post('../controllers/CategoriasController.php', { categoriaId: id }, function (r) {
+                    if (r.success) {
+                        cargarCategoriasTabla();
+                        alert(r.message);
+                    } else {
+                        alert('Error: ' + r.error);
+                    }
+                }, 'json').fail(function () {
+                    alert('Error de servidor al eliminar categoría.');
+                });
+            });
 
             function cargarMateriales() {
-                $.getJSON('../controllers/InventarioController.php', data => {
-                    tblMateriales.clear()
-                    data.forEach(m => {
-                        tblMateriales.row.add([
-                            m.materialId,
-                            m.nombre,
-                            m.descripcion,
-                            m.categoriaNombre ?? '',
-                            m.cantidad,
-                            `<button class="btn btn-warning btn-sm mat-editar" data-id="${m.materialId}" data-nombre="${m.nombre}" data-descripcion="${m.descripcion}" data-categoriaid="${m.categoriaId}" data-cantidad="${m.cantidad}">Editar</button>
-                     <button class="btn btn-danger btn-sm mat-eliminar" data-id="${m.materialId}">Eliminar</button>`
-                        ])
+                $.getJSON('../controllers/InventarioController.php')
+                    .done(function (data) {
+                        tblMateriales.clear();
+                        data.forEach(function (m) {
+                            tblMateriales.row.add([
+                                m.materialId,
+                                m.nombre,
+                                m.descripcion,
+                                m.categoriaNombre || '',
+                                m.cantidad,
+                                `<button class="btn btn-warning btn-sm mat-editar"
+                                 data-id="${m.materialId}"
+                                 data-nombre="${m.nombre}"
+                                 data-descripcion="${m.descripcion}"
+                                 data-categoriaid="${m.categoriaId}"
+                                 data-cantidad="${m.cantidad}">
+                             Editar
+                         </button>
+                         <button class="btn btn-danger btn-sm mat-eliminar"
+                                 data-id="${m.materialId}">
+                             Eliminar
+                         </button>`
+                            ]);
+                        });
+                        tblMateriales.draw();
                     })
-                    tblMateriales.draw()
-                }).fail(() => alert('Error al cargar los materiales.'))
+                    .fail(function () {
+                        alert('Error al cargar los materiales.');
+                    });
             }
 
             $('#agregarMaterialForm').submit(function (e) {
-                e.preventDefault()
+                e.preventDefault();
                 const payload = {
                     nombre: $('#materialNombre').val().trim(),
                     descripcion: $('#materialDescripcion').val().trim(),
                     categoriaId: $('#materialCategoria').val(),
                     cantidad: parseInt($('#materialCantidad').val(), 10)
-                }
-                if (!payload.nombre || !payload.descripcion || !payload.categoriaId || payload.cantidad < 1) return alert('Complete todos los campos correctamente.')
-                $.post('../controllers/RegistroMaterialesController.php', payload, r => {
-                    if (r.success) { $('#agregarMaterialModal').modal('hide'); this.reset(); cargarMateriales(); alert(r.message) } else alert('Error: ' + r.error)
-                }, 'json').fail(() => alert('Error de servidor al crear material.'))
-            })
+                };
+                if (!payload.nombre || !payload.descripcion || !payload.categoriaId || payload.cantidad < 1) return alert('Complete todos los campos correctamente.');
+                $.post('../controllers/RegistroMaterialesController.php', payload, function (r) {
+                    if (r.success) {
+                        $('#agregarMaterialModal').modal('hide');
+                        e.target.reset();
+                        cargarMateriales();
+                        alert(r.message);
+                    } else {
+                        alert('Error: ' + r.error);
+                    }
+                }, 'json').fail(function () {
+                    alert('Error de servidor al crear material.');
+                });
+            });
 
             $('#materialesTable tbody').on('click', '.mat-editar', function () {
-                const d = $(this).data()
-                $('#editarMaterialId').val(d.id)
-                $('#editarMaterialNombre').val(d.nombre)
-                $('#editarMaterialDescripcion').val(d.descripcion)
-                $('#editarMaterialCategoria').val(d.categoriaid)
-                $('#editarMaterialCantidad').val(d.cantidad)
-                $('#editarMaterialModal').modal('show')
-            })
+                const d = $(this).data();
+                $('#editarMaterialId').val(d.id);
+                $('#editarMaterialNombre').val(d.nombre);
+                $('#editarMaterialDescripcion').val(d.descripcion);
+                $('#editarMaterialCategoria').val(d.categoriaid);
+                $('#editarMaterialCantidad').val(d.cantidad);
+                $('#editarMaterialModal').modal('show');
+            });
 
             $('#editarMaterialForm').submit(function (e) {
-                e.preventDefault()
+                e.preventDefault();
                 const payload = {
                     materialId: $('#editarMaterialId').val(),
                     nombre: $('#editarMaterialNombre').val().trim(),
                     descripcion: $('#editarMaterialDescripcion').val().trim(),
                     categoriaId: $('#editarMaterialCategoria').val(),
                     cantidad: parseInt($('#editarMaterialCantidad').val(), 10)
-                }
-                if (!payload.nombre || !payload.descripcion || !payload.categoriaId || payload.cantidad < 1) return alert('Complete todos los campos correctamente.')
-                $.post('../controllers/EditarMaterialController.php', payload, r => {
-                    if (r.success) { $('#editarMaterialModal').modal('hide'); cargarMateriales(); alert(r.message) } else alert('Error: ' + r.error)
-                }, 'json').fail(() => alert('Error de servidor al editar material.'))
-            })
+                };
+                if (!payload.nombre || !payload.descripcion || !payload.categoriaId || payload.cantidad < 1) return alert('Complete todos los campos correctamente.');
+                $.post('../controllers/EditarMaterialController.php', payload, function (r) {
+                    if (r.success) {
+                        $('#editarMaterialModal').modal('hide');
+                        cargarMateriales();
+                        alert(r.message);
+                    } else {
+                        alert('Error: ' + r.error);
+                    }
+                }, 'json').fail(function () {
+                    alert('Error de servidor al editar material.');
+                });
+            });
 
             $('#materialesTable tbody').on('click', '.mat-eliminar', function () {
-                const id = $(this).data('id')
-                if (!confirm('¿Eliminar este material?')) return
-                $.post('../controllers/EliminarMaterialController.php', { materialId: id }, r => {
-                    if (r.success) { cargarMateriales(); alert(r.message) } else alert('Error: ' + r.error)
-                }, 'json').fail(() => alert('Error de servidor al eliminar material.'))
-            })
+                const id = $(this).data('id');
+                if (!confirm('¿Eliminar este material?')) return;
+                $.post('../controllers/EliminarMaterialController.php', { materialId: id }, function (r) {
+                    if (r.success) {
+                        cargarMateriales();
+                        alert(r.message);
+                    } else {
+                        alert('Error: ' + r.error);
+                    }
+                }, 'json').fail(function () {
+                    alert('Error de servidor al eliminar material.');
+                });
+            });
 
-            cargarCategoriasTabla()
-            cargarMateriales()
-        })
+            cargarCategoriasTabla();
+            cargarMateriales();
+        });
     </script>
+
 
 </body>
 
